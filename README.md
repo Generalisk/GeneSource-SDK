@@ -107,6 +107,7 @@ For more info on distributing your mod on steam, check out [here](https://partne
 
 # Credits
 - [Source SDK](https://developer.valvesoftware.com/wiki/SDK2013_GettingStarted) by [Valve Software](https://www.valvesoftware.com/)
+- [List of Contributors](.github/CONTRIBUTORS.md)
 
 # Contributing
 Before you go and make A pull request, please make sure that your request follows our [Contributon Guidelines](.github/CONTRIBUTING.md).
