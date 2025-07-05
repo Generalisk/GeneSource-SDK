@@ -37,6 +37,7 @@ The GeneSource SDK is A community-ran branch of Valve's [Source SDK](https://git
   - [Linux](#linux)
 - [Licensing](#licensing)
 - [Credits](#credits)
+- [Contributing](#contrinuting)
 - [Useful Resources](#useful-resources)
 
 # Features
@@ -106,6 +107,9 @@ For more info on distributing your mod on steam, check out [here](https://partne
 
 # Credits
 - [Source SDK](https://developer.valvesoftware.com/wiki/SDK2013_GettingStarted) by [Valve Software](https://www.valvesoftware.com/)
+
+# Contributing
+Before you go and make A pull request, please make sure that your request follows our [Contributon Guidelines](.github/CONTRIBUTING.md).
 
 # Useful Resources
 - [Valve Developer Wiki](https://developer.valvesoftware.com/wiki/Setting_up_Source_SDK_Base_2013_Multiplayer)
