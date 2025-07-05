@@ -1,6 +1,6 @@
 "GameInfo"
 {
-	game					"Frog Fortress 2"
+	game					"My First TF2 Mod"
 	type 					multiplayer_only
 	nomodels				1
 	nohimodel 				1
