@@ -57,10 +57,18 @@
 			game				|appid_220|hl2_complete/hl2_complete_sound_misc.vpk
 			game				|appid_220|hl2_complete/hl2_complete_misc.vpk
 
+			game				|appid_220|ep2/ep2_sound_vo_english.vpk
+			game				|appid_220|ep2/ep2_pak.vpk
+			game				|appid_220|episodic/ep1_sound_vo_english.vpk
+			game				|appid_220|episodic/ep1_pak.vpk
+			game				|appid_220|lostcoast/lostcoast_sound_vo_english.vpk
+			game				|appid_220|lostcoast/lostcoast_pak.vpk
+
 			//game				|appid_243750|hl2/hl2_textures.vpk
 			//game				|appid_243750|hl2/hl2_sound_vo_english.vpk
 			//game				|appid_243750|hl2/hl2_sound_misc.vpk
 			//game				|appid_243750|hl2/hl2_misc.vpk
+			game_lv				|appid_220|hl2/hl2_lv.vpk
 			game				|appid_220|hl2/hl2_textures.vpk
 			game				|appid_220|hl2/hl2_sound_vo_english.vpk
 			game				|appid_220|hl2/hl2_sound_misc.vpk
@@ -74,6 +82,9 @@
 			//game				|appid_243750|hl2
 			//platform			|appid_243750|platform
 			game				|appid_220|hl2_complete
+			game				|appid_220|ep2
+			game				|appid_220|episodic
+			game				|appid_220|lostcoast
 			game				|appid_220|hl2
 			platform			|appid_220|platform
 
