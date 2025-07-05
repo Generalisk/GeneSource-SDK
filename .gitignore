@@ -1,0 +1,51 @@
+# Generated Visual Studio Files
+.vs/
+*.sln
+*.vcxproj*
+*Debug*/
+*Release*/
+_vpc_/
+*.vpc_cache
+generated_proto_*/
+
+# Compiled Source Engine Binaries
+game/**/*.exe
+game/**/*.dll
+game/**/*.dylib
+game/**/*.so
+*.pdb
+
+src/lib/public/*/vgui_controls.*
+src/lib/public/*/tier1.*
+src/lib/public/*/raytrace.*
+src/lib/public/*/matsys_controls.*
+src/lib/public/*/mathlib.*
+src/lib/public/*/fgdlib.*
+
+# Generated Vscript Headers
+src/game/server/spawn_helper_nut.h
+src/game/server/vscript_server_nut.h
+
+# Generated Source Engine Files
+game/platform/
+**/maps/graphs/**
+game/*/materials/vgui/logos/ui/spray.vmt
+download/
+downloadlists/
+steam_appid.txt
+gamestate.txt
+server_blacklist.txt
+sound.cache
+modelsounds.cache
+voice_ban.dt
+stats.txt
+config.cfg
+ServerConfig.vdf
+demoheader.tmp
+viewed.res
+settings.scr
+user.scr
+
+# Generated TF2 Files
+local_loadout.txt
+tf2_playerstats.dmx
