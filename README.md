@@ -44,6 +44,7 @@ The GeneSource SDK is A community-ran branch of Valve's [Source SDK](https://git
 <!--TODO: Actually Add New Features-->
 
 # Supported Games
+- Half-Life 2
 - Half-Life 2: Deathmatch
 - Team Fortress 2
 
