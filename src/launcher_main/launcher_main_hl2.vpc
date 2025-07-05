@@ -1,0 +1,24 @@
+$Macro OUTBINNAME "hl2" [!$SOURCESDK]
+$Macro OUTBINNAME "mod_hl2" [$SOURCESDK]
+
+$Conditional "MOD_LAUNCHER" "1"
+
+$Include "launcher_main.vpc"
+
+$Configuration
+{
+	$Compiler
+	{
+		//$PreprocessorDefinitions	"$BASE;MOD_APPID=243750" // As of me writing this, singleplayer games in the current version of the source engine are broken (specificly the save/load system), and the singleplayer sdk does not support 64-bit. So, for the time being, we will have singleplayer mods run using the Half-Life 2 binaries.
+		$PreprocessorDefinitions	"$BASE;MOD_APPID=220" // Replace with your appid if you ship on Steam.
+	}
+}
+
+$Project "Launcher Main (HL2)"
+{
+    $Folder "Resource Files" [$WINDOWS]
+    {
+        $File   "launcher_main_hl2.rc"
+        $File   "res\hl2.ico"
+    }
+}
