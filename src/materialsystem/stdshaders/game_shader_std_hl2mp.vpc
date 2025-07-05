@@ -1,11 +1,11 @@
 //-----------------------------------------------------------------------------
-//	game_shader_generic_std_hl2mp.vpc
+//	game_shader_std_hl2mp.vpc
 //
 //	Project Script for mods to use an an example of how to override shaders
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR       "..\.."
-$Macro OUTBINNAME   "game_shader_generic_std"
+$Macro OUTBINNAME   "shaders_std"
 $Macro GAMENAME     "mod_hl2mp"
 
 $Macro OUTBINDIR	"$SRCDIR\..\game\$GAMENAME\bin"

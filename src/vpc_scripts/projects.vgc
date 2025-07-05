@@ -24,18 +24,18 @@ $Project "fgdlib"
 	"fgdlib\fgdlib.vpc" [$WINDOWS]
 }
 
-$Project "game_shader_generic_example"
+$Project "game_shader_generic"
 {
-	"materialsystem\stdshaders\game_shader_generic_example_hl2mp.vpc"	[$HL2MP]
-	"materialsystem\stdshaders\game_shader_generic_example_tf.vpc"		[$TF]
+	"materialsystem\stdshaders\game_shader_generic_hl2mp.vpc"	[$HL2MP]
+	"materialsystem\stdshaders\game_shader_generic_tf.vpc"		[$TF]
 }
 
 // Use this project if you want to override all std shaders with your own.
 // By default it will override ALL of them. So feel free to cut it down if you want :)
-$Project "game_shader_generic_std"
+$Project "game_shader_std"
 {
-	"materialsystem\stdshaders\game_shader_generic_std_hl2mp.vpc"	[$HL2MP]
-	"materialsystem\stdshaders\game_shader_generic_std_tf.vpc"	[$TF]
+	"materialsystem\stdshaders\game_shader_std_hl2mp.vpc"	[$HL2MP]
+	"materialsystem\stdshaders\game_shader_std_tf.vpc"	[$TF]
 }
 
 $Project "glview"

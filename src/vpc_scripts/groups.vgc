@@ -28,8 +28,8 @@ $Group "game"
 
 $Group "shaders"
 {
-	"game_shader_generic_example"
-	//"game_shader_generic_std"
+	"game_shader_generic"
+	//"game_shader_std"
 }
 
 $Group "everything"
@@ -60,11 +60,11 @@ $Group "everything"
 	"vvis_dll"
 	"vvis_launcher"
 
-	"game_shader_generic_example"
+	"game_shader_generic"
 
 	// You probably don't want to override all shaders by default.
 	// This is just an example mainly! Pick and choose what you want from this project. :D
-	//"game_shader_generic_std"
+	//"game_shader_std"
 }
 
 $Group "dedicated"
