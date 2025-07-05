@@ -1,4 +1,5 @@
-$Macro OUTBINNAME "mod_tf"
+$Macro OUTBINNAME "tf" [!$SOURCESDK]
+$Macro OUTBINNAME "mod_tf" [$SOURCESDK]
 
 $Conditional "MOD_LAUNCHER" "1"
 
@@ -12,11 +13,11 @@ $Configuration
 	}
 }
 
-$Project "Launcher Main (Mod TF)"
+$Project "Launcher Main (TF)"
 {
     $Folder "Resource Files" [$WINDOWS]
     {
-        $File   "launcher_main_mod_tf.rc"
-        $File   "res\mod_tf.ico"
+        $File   "launcher_main_tf.rc"
+        $File   "res\tf.ico"
     }
 }
