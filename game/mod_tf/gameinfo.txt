@@ -4,6 +4,9 @@
 	type 			multiplayer_only
 	DependsOnAppID 		440
 
+	developer		"Valve Software"
+	developer_url		"https://www.valvesoftware.com/"
+
 	nomodels		1
 	nohimodel 		1
 	nocrosshair		0

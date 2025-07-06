@@ -3,6 +3,9 @@
 	game		"My First HL2MP Mod"
 	type		multiplayer_only
 
+	developer	"Valve Software"
+	developer_url	"https://www.valvesoftware.com/"
+
 	title		"HALF+LIFE'"
 	title2		"deathmatch"
 

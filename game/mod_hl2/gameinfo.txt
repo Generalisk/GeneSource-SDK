@@ -2,7 +2,10 @@
 {
 	game		"My First HL2 Mod"
 	type		singleplayer_only
-	//dependsonappid	220	// Half-Life 2
+	//DependsOnAppID	220	// Half-Life 2
+
+	developer	"Valve Software"
+	developer_url	"https://www.valvesoftware.com/"
 
 	title		"HALF-LIFE'"
 
