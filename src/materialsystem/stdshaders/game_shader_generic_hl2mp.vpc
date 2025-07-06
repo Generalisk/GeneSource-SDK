@@ -6,7 +6,8 @@
 
 $Macro SRCDIR       "..\.."
 $Macro OUTBINNAME   "shaders"
-$Macro GAMENAME     "mod_hl2mp"
+$Macro GAMENAME     "hl2mp" [!$SOURCESDK]
+$Macro GAMENAME     "mod_hl2mp" [$SOURCESDK]
 
 $Include "$SRCDIR\materialsystem\stdshaders\game_shader_generic_base.vpc"
 
