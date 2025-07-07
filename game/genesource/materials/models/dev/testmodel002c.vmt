@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	$basetexture		"models/dev/testmodel002c_albedo"
+	$bumpmap			"models/dev/testmodel002_bump"
+
+	$phong 1
+	$phongexponenttexture		"models/dev/testmodel002_phongexp"
+	$phongexponentfactor		32.0
+	$phongboost					5.0
+	$phongfresnelranges			"[0.1 0.8 1.0]"
+}

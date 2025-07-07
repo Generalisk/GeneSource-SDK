@@ -1,0 +1,16 @@
+VertexLitGeneric
+{
+	$basetexture		"models/dev/testmodel004e_albedo"
+	$bumpmap			"models/dev/testmodel004_bump"
+
+	$envmap						"env_cubemap"
+	$envmaptint					"[0.1 0.1 0.1]"
+	$envmapcontrast				1.0
+	$basetextureenvmapmask		1
+
+	$phong 1
+	$phongexponenttexture		"models/dev/testmodel004_phongexp"
+	$phongexponentfactor		32.0
+	$phongboost					5.0
+	$phongfresnelranges			"[0.1 0.8 1.0]"
+}
