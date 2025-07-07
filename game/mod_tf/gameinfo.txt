@@ -51,21 +51,22 @@
 			// VPK and we can avoid making thousands of file system calls to attempt to open files
 			// in folders where they don't exist.  (Searching a VPK is much faster than making an operating
 			// system call.)
-			game_lv			|appid_440|tf/tf2_lv.vpk
-			game+mod		|appid_440|tf/tf2_textures.vpk
-			game+mod		|appid_440|tf/tf2_sound_vo_english.vpk
-			game+mod		|appid_440|tf/tf2_sound_misc.vpk
-			game+mod+vgui		|appid_440|tf/tf2_misc.vpk
-			game			|appid_243750|hl2/hl2_textures.vpk
-			game			|appid_243750|hl2/hl2_sound_vo_english.vpk
-			game			|appid_243750|hl2/hl2_sound_misc.vpk
-			game+vgui		|appid_243750|hl2/hl2_misc.vpk
-			platform+vgui		|appid_243750|platform/platform_misc.vpk
+			game_lv		|appid_440|tf/tf2_lv.vpk
+			game+mod	|appid_440|tf/tf2_textures.vpk
+			game+mod	|appid_440|tf/tf2_sound_vo_english.vpk
+			game+mod	|appid_440|tf/tf2_sound_misc.vpk
+			game+mod+vgui	|appid_440|tf/tf2_misc.vpk
+			game		|appid_243750|hl2/hl2_textures.vpk
+			game		|appid_243750|hl2/hl2_sound_vo_english.vpk
+			game		|appid_243750|hl2/hl2_sound_misc.vpk
+			game+vgui	|appid_243750|hl2/hl2_misc.vpk
+			platform+vgui	|appid_243750|platform/platform_misc.vpk
 
 			// Last, mount in shared HL2 and TF2 loose files
-			game+mod		|appid_440|tf
-			game			|appid_243750|hl2
-			platform		|appid_243750|platform
+			game+mod	|gameinfo_path|../genesource
+			game+mod	|appid_440|tf
+			game		|appid_243750|hl2
+			platform	|appid_243750|platform
 
 			// Random files downloaded from gameservers go into a seperate directory, so
 			// that it's easy to keep those files segregated from the official game files
@@ -78,7 +79,7 @@
 			// packed up in the .bsp file so that it will be mounted as a map search pack.
 			// The map search pack is mounted at the top of the search path list,
 			// but only while you are connected that server and on that map.
-			game+download		|gameinfo_path|download
+			game+download	|gameinfo_path|download
 		}
 	}
 }
