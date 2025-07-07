@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "dev/uvgrid"
+	"$halflambert" "1"
+	"$nocull" "1"
+	"$model" "1"
+}
