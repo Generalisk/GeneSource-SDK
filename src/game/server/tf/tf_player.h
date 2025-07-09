@@ -568,6 +568,7 @@ public:
 	void PlayerUse( void );
 
 	void IgnitePlayer();
+	void IgnitePlayerEx( float fBurnTime = 5.0f );
 	void SetCustomModel( const char *pszModel );
 	void SetCustomModelWithClassAnimations( const char *pszModel );
 	void SetCustomModelOffset( const Vector &offset );
@@ -583,6 +584,7 @@ public:
 	void ClearSpells();
 
 	void InputIgnitePlayer( inputdata_t &inputdata );
+	void InputIgnitePlayerEx( inputdata_t &inputdata );
 	void InputSetCustomModel( inputdata_t &inputdata );
 	void InputSetCustomModelWithClassAnimations( inputdata_t &inputdata );
 	void InputSetCustomModelOffset( inputdata_t &inputdata );
@@ -777,6 +779,8 @@ public:
 
 	bool				IsViewingCYOAPDA( void ) const { return m_bViewingCYOAPDA; }
 	bool				IsRegenerating( void ) const { return m_bRegenerating; }
+
+	void                DoomsdayAchievementCheck();
 
 	HSCRIPT				ScriptGetActiveWeapon( void ) { return ToHScript( GetActiveTFWeapon() ); }
 
