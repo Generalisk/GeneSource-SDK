@@ -13,7 +13,7 @@
 
 	advcrosshair 		1
 
-	gamedata		"tf.fgd"
+	gamedata		"mod_tf.fgd"
 	nodegraph 		0
 	instancepath		"maps/instances/"
 

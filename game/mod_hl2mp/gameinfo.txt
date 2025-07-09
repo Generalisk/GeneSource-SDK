@@ -13,7 +13,7 @@
 	nohimodel	1
 	nocrosshair	1
 
-	gamedata	"hl2mp.fgd"
+	gamedata	"mod_hl2mp.fgd"
 	nodegraph 	0
 	instancepath	"maps/instances/"
 

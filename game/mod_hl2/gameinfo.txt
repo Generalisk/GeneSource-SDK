@@ -9,7 +9,7 @@
 
 	title		"HALF-LIFE'"
 
-	gamedata	"hl2.fgd"
+	gamedata	"mod_hl2.fgd"
 	instancepath	"maps/instances/"
 
 	supportsvr	1
