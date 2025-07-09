@@ -236,6 +236,8 @@ ConVar tf_halloween_giant_health_scale( "tf_halloween_giant_health_scale", "10",
 ConVar tf_grapplinghook_los_force_detach_time( "tf_grapplinghook_los_force_detach_time", "1", FCVAR_CHEAT );
 ConVar tf_powerup_max_charge_time( "tf_powerup_max_charge_time", "30", FCVAR_CHEAT );
 
+ConVar tf_disguise_mimic_fall_damage("tf_disguise_mimic_fall_damage", "0", FCVAR_NOTIFY, "Should disguised spies mimic flinching and pain sounds when taking fall damage?", true, 0, true, 1);
+
 extern ConVar tf_powerup_mode;
 extern ConVar tf_mvm_buybacks_method;
 extern ConVar tf_mvm_buybacks_per_wave;
