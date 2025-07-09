@@ -9,6 +9,7 @@
 #include <filesystem.h>
 #include <time.h>
 #include "tf_lobby_server.h"
+#include <vgui_controls/ScrollBarSlider.h>
 
 using namespace vgui;
 
@@ -272,6 +273,8 @@ char *ConvertScoreboardValueToString( int iValue )
 //-----------------------------------------------------------------------------
 void CTFHudMannVsMachineScoreboard::PopulatePlayerListEntry(int playerIndex)
 {
+	int iSelectedPlayerIndex = GetLocalPlayerIndex();
+
 	if( !g_PR->IsConnected( playerIndex ) )
 	{
 		return;
@@ -429,6 +432,11 @@ void CTFHudMannVsMachineScoreboard::PopulatePlayerListEntry(int playerIndex)
 	m_pPlayerList->SetItemFgColor( itemID, fgClr );
 	m_pPlayerList->SetItemBgColor( itemID, bgClr );
 	m_pPlayerList->SetItemFont( itemID, m_hScoreFont );
+
+	if (iSelectedPlayerIndex == playerIndex)
+	{
+		m_pPlayerList->SetSelectedItem(itemID);
+	}
 			
 	pKeyValues->deleteThis();
 }
@@ -437,6 +445,19 @@ void CTFHudMannVsMachineScoreboard::PopulatePlayerListEntry(int playerIndex)
 void CTFHudMannVsMachineScoreboard::UpdatePlayerList () 
 {
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+	int iSelectedPlayerIndex = pPlayer->index;
+
+	// Save off which player we had selected
+	int itemID = m_pPlayerList->GetSelectedItem();
+
+	if (itemID >= 0)
+	{
+		KeyValues* pInfo = m_pPlayerList->GetItemData(itemID);
+		if (pInfo)
+		{
+			iSelectedPlayerIndex = pInfo->GetInt("playerIndex");
+		}
+	}
 
 	m_pPlayerList->ClearSelection();
 	m_pPlayerList->RemoveAll();
@@ -694,3 +715,25 @@ void CTFHudMannVsMachineScoreboard::UpdatePopFile( void )
 	}
 }
 
+//-----------------------------------------------------------------------------
+void CTFHudMannVsMachineScoreboard::InitializeInputScheme( bool bUseMouse )
+{
+	SetKeyBoardInputEnabled( false );
+	SetMouseInputEnabled( bUseMouse );
+	m_pPlayerList->SetEnabled( bUseMouse );
+	m_pPlayerList->SetMouseInputEnabled( bUseMouse );
+	m_pPlayerList->AddActionSignalTarget( GetParent() );
+	m_pPlayerList->SetClickable( bUseMouse );
+
+	if( m_pPlayerList->GetScrollBar() &&
+		m_pPlayerList->GetScrollBar()->GetButton( 0 ) &&
+		m_pPlayerList->GetScrollBar()->GetButton( 1 ) &&
+		m_pPlayerList->GetScrollBar()->GetSlider() )
+	{
+		m_pPlayerList->SetVerticalScrollbar( bUseMouse );
+		m_pPlayerList->GetScrollBar()->GetButton( 0 )->SetMouseInputEnabled( bUseMouse );
+		m_pPlayerList->GetScrollBar()->GetButton( 1 )->SetMouseInputEnabled( bUseMouse );
+		m_pPlayerList->GetScrollBar()->GetSlider()->SetMouseInputEnabled( bUseMouse );
+		m_pPlayerList->GetScrollBar()->SetMouseInputEnabled( bUseMouse );
+	}
+}
