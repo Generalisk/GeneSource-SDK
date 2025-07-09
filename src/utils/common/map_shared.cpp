@@ -29,7 +29,7 @@ ChunkFileResult_t LoadEntityKeyCallback(const char *szKey, const char *szValue, 
 		{
 			pLoadEntity->nBaseContents = CONTENTS_DETAIL;
 		}
-		else if (!stricmp( szValue, "func_detail_nonsolid"))
+		else if (!stricmp(szValue, "func_detail_illusionary"))
 		{
 			pLoadEntity->nBaseContents = CONTENTS_DETAIL | CONTENTS_OPAQUE;
 		}

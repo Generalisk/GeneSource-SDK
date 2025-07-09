@@ -1579,7 +1579,7 @@ ChunkFileResult_t CMapFile::LoadEntityCallback(CChunkFile *pFile, int nParam)
 		//
 		const char *pClassName = ValueForKey( mapent, "classname" );
 
-		if ( !strcmp( "func_detail", pClassName ) || !strcmp( "func_detail_nonsolid", pClassName ) )
+		if ( !strcmp( "func_detail", pClassName ) || !strcmp( "func_detail_illusionary", pClassName ) )
 		{
 			MoveBrushesToWorld (mapent);
 			mapent->numbrushes = 0;
@@ -2645,8 +2645,8 @@ bool LoadMapFile( const char *pszFileName )
 		}
 
 		// CONTENTS_OPAQUE makes a brush not solid, but CONTENTS_WINDOW breaks its non-solidity
-		// CONTENTS_OPAQUE only gets applied via %compilenonsolid VMT property and func_detail_nonsolid entity
-		// %compilenonsolid prevents CONTENTS_WINDOW from being applied, func_detail_nonsolid does not, so we remove it here
+		// CONTENTS_OPAQUE only gets applied via %compilenonsolid VMT property and func_detail_illusionary entity
+		// %compilenonsolid prevents CONTENTS_WINDOW from being applied, func_detail_illusionary does not, so we remove it here
 		for ( int i = 0; i < g_LoadingMap->entities[0].numbrushes; i++ )
 		{
 			mapbrush_t* brush = &g_LoadingMap->mapbrushes[i];
