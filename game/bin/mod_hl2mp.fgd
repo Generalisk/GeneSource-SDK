@@ -1,1 +1,2 @@
 @include "hl2mp.fgd"
+@include "genesource.fgd"

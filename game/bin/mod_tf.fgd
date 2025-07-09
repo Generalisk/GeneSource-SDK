@@ -1,1 +1,2 @@
 @include "tf.fgd"
+@include "genesource.fgd"
