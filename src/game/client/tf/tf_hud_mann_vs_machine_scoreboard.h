@@ -70,6 +70,7 @@ public:
 private:
 	void InitPlayerList( vgui::IScheme *pScheme );
 	void UpdatePlayerList();
+	void PopulatePlayerListEntry(int playerIndex);
 	void UpdatePlayerAvatar( int playerIndex, KeyValues *kv );
 	void UpdateCreditStats();
 	void UpdateCreditSpend();

@@ -12,6 +12,7 @@
 
 using namespace vgui;
 
+ConVar cl_mvm_scoreboard_player_always_first( "cl_mvm_scoreboard_player_always_first", "0", FCVAR_ARCHIVE, "Force the client to always be first on the MvM scoreboard." );
 
 extern ConVar tf_mvm_respec_credit_goal;
 extern ConVar tf_mvm_respec_limit;
@@ -269,175 +270,195 @@ char *ConvertScoreboardValueToString( int iValue )
 }
 
 //-----------------------------------------------------------------------------
+void CTFHudMannVsMachineScoreboard::PopulatePlayerListEntry(int playerIndex)
+{
+	if( !g_PR->IsConnected( playerIndex ) )
+	{
+		return;
+	}
+
+	if ( g_PR->GetTeam( playerIndex ) != TF_TEAM_PVE_DEFENDERS ) 
+	{
+		return;
+	}
+
+	const char *szName = g_TF_PR->GetPlayerName( playerIndex );
+	KeyValues *pKeyValues = new KeyValues( "data" );
+
+	pKeyValues->SetInt( "playerIndex", playerIndex );
+	pKeyValues->SetString( "name", szName );
+			
+	bool bAlive = g_TF_PR->IsAlive( playerIndex );
+
+	if( g_PR->IsConnected( playerIndex ) )
+	{
+		int iClass = g_TF_PR->GetPlayerClass( playerIndex );
+		if ( GetLocalPlayerIndex() == playerIndex && !bAlive )
+		{
+			// If this is local player and he is dead, show desired class (which he will spawn as) rather than current class.
+			C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
+			int iDesiredClass = pPlayer->m_Shared.GetDesiredPlayerClassIndex();
+			// use desired class unless it's random -- if random, his future class is not decided until moment of spawn
+			if ( TF_CLASS_RANDOM != iDesiredClass )
+			{
+				iClass = iDesiredClass;
+			}
+		} 
+		else 
+		{
+			// for non-local players, show the current class
+			iClass = g_TF_PR->GetPlayerClass( playerIndex );
+		}
+
+		if ( iClass >= TF_FIRST_NORMAL_CLASS && iClass <= TF_LAST_NORMAL_CLASS )
+		{
+			if ( bAlive )
+			{
+				pKeyValues->SetInt( "class", tf_scoreboard_alt_class_icons.GetBool() ? m_iImageClassAlt[iClass] : m_iImageClass[iClass] );
+			}
+			else
+			{
+				pKeyValues->SetInt( "class", tf_scoreboard_alt_class_icons.GetBool() ? m_iImageClassAlt[iClass + 9] : m_iImageClass[iClass + 9] ); // +9 is to jump ahead to the darker dead icons
+			}
+		}
+		else
+		{
+			pKeyValues->SetInt( "class", 0 );
+		}
+	}
+
+	// check for bots first, so malicious server operators can't fake a ping and stuff their server with bots that look like players
+	if ( g_PR->IsFakePlayer( playerIndex ) )
+	{
+		pKeyValues->SetString( "ping", "#TF_Scoreboard_Bot" );
+	}
+	else
+	{
+		if ( g_PR->GetPing( playerIndex ) < 1 )
+		{
+			pKeyValues->SetString( "ping", "" );
+		}
+		else
+		{
+			pKeyValues->SetString( "ping", ConvertScoreboardValueToString( g_PR->GetPing( playerIndex ) ) );
+		}
+	}
+
+	Color fgClr;
+	Color bgClr;
+	// change color based off alive or dead status. Also slightly different if its local player since the name is highlighted.
+	if ( bAlive )
+	{
+		UpdatePlayerAvatar( playerIndex, pKeyValues );
+		fgClr = g_PR->GetTeamColor( TF_TEAM_RED );
+		bgClr = Color( 0, 0, 0, 0 );
+	}
+	else
+	{
+		pKeyValues->SetInt( "avatar", m_iImageDead );
+		fgClr = Color( 117, 107, 94, 255 );
+		bgClr = Color( 78, 78, 78, 150 );
+	}
+
+	// the medal column is just a place holder for the images that are displayed later
+	pKeyValues->SetInt( "medal", 0 );
+
+	if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() )
+	{
+		CTFGSLobby *pLobby = GTFGCClientSystem()->GetLobby();
+		if ( pLobby )
+		{
+			int nTourNo = 0;
+			int bSurplusEnabled = false;
+			int idxMember = pLobby->GetMemberIndexBySteamID( GetSteamIDForPlayerIndex( playerIndex ) );
+			if ( idxMember >= 0 )
+			{
+				ConstTFLobbyPlayer member = pLobby->GetMemberDetails( idxMember );
+				// I guess they could be on standby to join the match while being themselves ad-hoc or something
+				// bizarre?
+				bSurplusEnabled = member.BMatchPlayer() && member.GetSquadSurplus();
+				nTourNo = member.GetBadgeLevel();
+			}
+
+			if ( bSurplusEnabled )
+			{
+				pKeyValues->SetInt( "squad_surplus", m_iSquadSurplusTexture );
+			}
+			else
+			{
+				pKeyValues->SetInt( "squad_surplus", 0 );
+			}
+
+			if ( nTourNo > 0 )
+			{
+				pKeyValues->SetString( "tour_no", ConvertScoreboardValueToString( nTourNo ) );
+			}
+			else
+			{
+				pKeyValues->SetString( "tour_no", "" );
+			}
+		}
+
+		// int nTeam = g_PR->GetTeam( playerIndex );
+		// int nTeamDamage = g_TF_PR->GetTeamDamage( nTeam );
+		// int nTeamTankDamage = g_TF_PR->GetTeamDamageBoss( nTeam );
+		// int nTeamAssist = g_TF_PR->GetTeamDamageAssist( nTeam ) + g_TF_PR->GetTeamHealingAssist( nTeam );
+		// int nTeamHealing = g_TF_PR->GetTeamHealingAssist( nTeam );
+
+		// Note: Inflate bonus points when bucketing with healing and damage assist.
+		// We do this because each have different weights.  Example: Every 250 points
+		// of healing or damage assist results in 1 point of Score.  Bonus requires
+		// only 10.  This makes it easier for players to evaluate their "support" value.
+		int nSupport = g_TF_PR->GetDamageAssist( playerIndex ) + 
+					   g_TF_PR->GetHealingAssist( playerIndex ) +
+					   g_TF_PR->GetDamageBlocked( playerIndex ) +
+					   ( g_TF_PR->GetBonusPoints( playerIndex ) * 25 );
+
+		pKeyValues->SetString( "score", ConvertScoreboardValueToString( g_TF_PR->GetTotalScore( playerIndex ) ) );
+		pKeyValues->SetString( "damage", ConvertScoreboardValueToString( g_TF_PR->GetDamage( playerIndex ) ) );
+		pKeyValues->SetString( "tank", ConvertScoreboardValueToString( g_TF_PR->GetDamageBoss( playerIndex ) ) );
+		pKeyValues->SetString( "healing", ConvertScoreboardValueToString( g_TF_PR->GetHealing( playerIndex ) ) );
+		pKeyValues->SetString( "support", ConvertScoreboardValueToString( nSupport ) );
+		//pKeyValues->SetString( "blocked", ConvertScoreboardValueToString( g_TF_PR->GetDamageBlocked( playerIndex ) ) );
+		//pKeyValues->SetString( "bonus", ConvertScoreboardValueToString( g_TF_PR->GetBonusPoints( playerIndex ) ) );
+		pKeyValues->SetString( "credits", ConvertScoreboardValueToString( g_TF_PR->GetCurrencyCollected( playerIndex ) ) );
+	}	
+
+	int itemID = m_pPlayerList->AddItem( 0, pKeyValues );
+			
+	m_pPlayerList->SetItemFgColor( itemID, fgClr );
+	m_pPlayerList->SetItemBgColor( itemID, bgClr );
+	m_pPlayerList->SetItemFont( itemID, m_hScoreFont );
+			
+	pKeyValues->deleteThis();
+}
+
+//-----------------------------------------------------------------------------
 void CTFHudMannVsMachineScoreboard::UpdatePlayerList () 
 {
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
 	m_pPlayerList->ClearSelection();
 	m_pPlayerList->RemoveAll();
 
 	if ( !g_TF_PR )
 		return;
 
+	if (cl_mvm_scoreboard_player_always_first.GetBool())
+	{
+		// Populate ourselves first.
+		PopulatePlayerListEntry(pPlayer->entindex());
+	}
+
 	for( int playerIndex = 1 ; playerIndex <= MAX_PLAYERS; playerIndex++ )
 	{
-		if( !g_PR->IsConnected( playerIndex ) )
+		// Don't populate something that we've already potentially done.
+		if (cl_mvm_scoreboard_player_always_first.GetBool() && (pPlayer->entindex() == playerIndex))
 		{
 			continue;
 		}
 
-		if ( g_PR->GetTeam( playerIndex ) != TF_TEAM_PVE_DEFENDERS ) 
-		{
-			continue;
-		}
-
-		const char *szName = g_TF_PR->GetPlayerName( playerIndex );
-		KeyValues *pKeyValues = new KeyValues( "data" );
-
-		pKeyValues->SetInt( "playerIndex", playerIndex );
-		pKeyValues->SetString( "name", szName );
-			
-		bool bAlive = g_TF_PR->IsAlive( playerIndex );
-
-		if( g_PR->IsConnected( playerIndex ) )
-		{
-			int iClass = g_TF_PR->GetPlayerClass( playerIndex );
-			if ( GetLocalPlayerIndex() == playerIndex && !bAlive )
-			{
-				// If this is local player and he is dead, show desired class (which he will spawn as) rather than current class.
-				C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
-				int iDesiredClass = pPlayer->m_Shared.GetDesiredPlayerClassIndex();
-				// use desired class unless it's random -- if random, his future class is not decided until moment of spawn
-				if ( TF_CLASS_RANDOM != iDesiredClass )
-				{
-					iClass = iDesiredClass;
-				}
-			} 
-			else 
-			{
-				// for non-local players, show the current class
-				iClass = g_TF_PR->GetPlayerClass( playerIndex );
-			}
-
-			if ( iClass >= TF_FIRST_NORMAL_CLASS && iClass <= TF_LAST_NORMAL_CLASS )
-			{
-				if ( bAlive )
-				{
-					pKeyValues->SetInt( "class", tf_scoreboard_alt_class_icons.GetBool() ? m_iImageClassAlt[iClass] : m_iImageClass[iClass] );
-				}
-				else
-				{
-					pKeyValues->SetInt( "class", tf_scoreboard_alt_class_icons.GetBool() ? m_iImageClassAlt[iClass + 9] : m_iImageClass[iClass + 9] ); // +9 is to jump ahead to the darker dead icons
-				}
-			}
-			else
-			{
-				pKeyValues->SetInt( "class", 0 );
-			}
-		}
-
-		// check for bots first, so malicious server operators can't fake a ping and stuff their server with bots that look like players
-		if ( g_PR->IsFakePlayer( playerIndex ) )
-		{
-			pKeyValues->SetString( "ping", "#TF_Scoreboard_Bot" );
-		}
-		else
-		{
-			if ( g_PR->GetPing( playerIndex ) < 1 )
-			{
-				pKeyValues->SetString( "ping", "" );
-			}
-			else
-			{
-				pKeyValues->SetString( "ping", ConvertScoreboardValueToString( g_PR->GetPing( playerIndex ) ) );
-			}
-		}
-
-		Color fgClr;
-		Color bgClr;
-		// change color based off alive or dead status. Also slightly different if its local player since the name is highlighted.
-		if ( bAlive )
-		{
-			UpdatePlayerAvatar( playerIndex, pKeyValues );
-			fgClr = g_PR->GetTeamColor( TF_TEAM_RED );
-			bgClr = Color( 0, 0, 0, 0 );
-		}
-		else
-		{
-			pKeyValues->SetInt( "avatar", m_iImageDead );
-			fgClr = Color( 117, 107, 94, 255 );
-			bgClr = Color( 78, 78, 78, 150 );
-		}
-
-		// the medal column is just a place holder for the images that are displayed later
-		pKeyValues->SetInt( "medal", 0 );
-
-		if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() )
-		{
-			CTFGSLobby *pLobby = GTFGCClientSystem()->GetLobby();
-			if ( pLobby )
-			{
-				int nTourNo = 0;
-				int bSurplusEnabled = false;
-				int idxMember = pLobby->GetMemberIndexBySteamID( GetSteamIDForPlayerIndex( playerIndex ) );
-				if ( idxMember >= 0 )
-				{
-					ConstTFLobbyPlayer member = pLobby->GetMemberDetails( idxMember );
-					// I guess they could be on standby to join the match while being themselves ad-hoc or something
-					// bizarre?
-					bSurplusEnabled = member.BMatchPlayer() && member.GetSquadSurplus();
-					nTourNo = member.GetBadgeLevel();
-				}
-
-				if ( bSurplusEnabled )
-				{
-					pKeyValues->SetInt( "squad_surplus", m_iSquadSurplusTexture );
-				}
-				else
-				{
-					pKeyValues->SetInt( "squad_surplus", 0 );
-				}
-
-				if ( nTourNo > 0 )
-				{
-					pKeyValues->SetString( "tour_no", ConvertScoreboardValueToString( nTourNo ) );
-				}
-				else
-				{
-					pKeyValues->SetString( "tour_no", "" );
-				}
-			}
-
-			// int nTeam = g_PR->GetTeam( playerIndex );
-			// int nTeamDamage = g_TF_PR->GetTeamDamage( nTeam );
-			// int nTeamTankDamage = g_TF_PR->GetTeamDamageBoss( nTeam );
-			// int nTeamAssist = g_TF_PR->GetTeamDamageAssist( nTeam ) + g_TF_PR->GetTeamHealingAssist( nTeam );
-			// int nTeamHealing = g_TF_PR->GetTeamHealingAssist( nTeam );
-
-			// Note: Inflate bonus points when bucketing with healing and damage assist.
-			// We do this because each have different weights.  Example: Every 250 points
-			// of healing or damage assist results in 1 point of Score.  Bonus requires
-			// only 10.  This makes it easier for players to evaluate their "support" value.
-			int nSupport = g_TF_PR->GetDamageAssist( playerIndex ) + 
-						   g_TF_PR->GetHealingAssist( playerIndex ) +
-						   g_TF_PR->GetDamageBlocked( playerIndex ) +
-						   ( g_TF_PR->GetBonusPoints( playerIndex ) * 25 );
-
-			pKeyValues->SetString( "score", ConvertScoreboardValueToString( g_TF_PR->GetTotalScore( playerIndex ) ) );
-			pKeyValues->SetString( "damage", ConvertScoreboardValueToString( g_TF_PR->GetDamage( playerIndex ) ) );
-			pKeyValues->SetString( "tank", ConvertScoreboardValueToString( g_TF_PR->GetDamageBoss( playerIndex ) ) );
-			pKeyValues->SetString( "healing", ConvertScoreboardValueToString( g_TF_PR->GetHealing( playerIndex ) ) );
-			pKeyValues->SetString( "support", ConvertScoreboardValueToString( nSupport ) );
-			//pKeyValues->SetString( "blocked", ConvertScoreboardValueToString( g_TF_PR->GetDamageBlocked( playerIndex ) ) );
-			//pKeyValues->SetString( "bonus", ConvertScoreboardValueToString( g_TF_PR->GetBonusPoints( playerIndex ) ) );
-			pKeyValues->SetString( "credits", ConvertScoreboardValueToString( g_TF_PR->GetCurrencyCollected( playerIndex ) ) );
-		}	
-
-		int itemID = m_pPlayerList->AddItem( 0, pKeyValues );
-			
-		m_pPlayerList->SetItemFgColor( itemID, fgClr );
-		m_pPlayerList->SetItemBgColor( itemID, bgClr );
-		m_pPlayerList->SetItemFont( itemID, m_hScoreFont );
-			
-		pKeyValues->deleteThis();
+		PopulatePlayerListEntry(playerIndex);
 	}
 
 	// force the list to PerformLayout() now so we can update our medal images after we return
