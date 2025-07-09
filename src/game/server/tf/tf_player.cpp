@@ -3160,7 +3160,7 @@ void CTFPlayer::PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper )
 	{
 		m_Shared.CreateVehicleMove( gpGlobals->frametime, ucmd );
 	}
-	else if ( IsTaunting() || m_Shared.InCond( TF_COND_HALLOWEEN_THRILLER ) )
+	else if ( IsTaunting() )
 	{
 		// For some taunts, it is critical that the player not move once they start
 		if ( !CanMoveDuringTaunt() )
@@ -4931,6 +4931,9 @@ void CTFPlayer::UseActionSlotItemPressed( void )
 		DoNoiseMaker();
 		return;
 	}
+
+	if ( m_Shared.InCond( TF_COND_FREEZE_INPUT ) )
+		return;
 
 	CBaseEntity *pActionSlotEntity = GetEntityForLoadoutSlot( LOADOUT_POSITION_ACTION );
 	if ( !pActionSlotEntity )
@@ -10945,8 +10948,8 @@ bool CTFPlayer::ShouldGib( const CTakeDamageInfo &info )
 	}
 
 	// normal players/bots don't gib in MvM
-// 	if ( TFGameRules()->IsMannVsMachineMode() )
-// 		return false;
+	if ( TFGameRules()->IsMannVsMachineMode() )
+		return false;
 
 	// Suicide explode always gibs.
 	if ( m_bSuicideExplode )
@@ -18290,6 +18293,12 @@ void CTFPlayer::HandleTauntCommand( int iTauntSlot )
 	if ( !IsAllowedToTaunt() )
 		return;
 
+	if ( m_Shared.InCond( TF_COND_HALLOWEEN_THRILLER ) )
+	{
+		// Don't allow econ taunts during thriller cond
+		Taunt();
+		return;
+	}
 	m_nActiveTauntSlot = LOADOUT_POSITION_INVALID;
 	if ( iTauntSlot > 0 && iTauntSlot <= 8 )
 	{
@@ -19538,7 +19547,7 @@ void CTFPlayer::ModifyOrAppendCriteria( AI_CriteriaSet& criteriaSet )
 	}
 
 	// Force the thriller taunt if we have the thriller condition
-	if( m_Shared.InCond( TF_COND_HALLOWEEN_THRILLER ) )
+	if ( m_Shared.InCond( TF_COND_HALLOWEEN_THRILLER ) )
 	{
 		criteriaSet.AppendCriteria( "IsHalloweenTaunt", "1" );
 	}
