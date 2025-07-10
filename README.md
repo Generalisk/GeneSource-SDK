@@ -41,7 +41,9 @@ The GeneSource SDK is A community-ran branch of Valve's [Source SDK](https://git
 - [Useful Resources](#useful-resources)
 
 # Features
-<!--TODO: Actually Add New Features-->
+- A built-in library of free-to-use assets made by the community, for the community
+- Proximity Chat Support
+- ...and ***SO MANY*** bug fixes & quality of life improvements
 
 # Supported Games
 - Half-Life 2
