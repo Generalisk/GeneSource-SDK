@@ -518,7 +518,6 @@ void CTFTankBoss::Spawn( void )
 void CTFTankBoss::UpdateOnRemove( void )
 {
 	StopSound( "MVM.TankEngineLoop" );
-	StopSound( "MVM.TankDeploy" );
 
 	if ( TFObjectiveResource() )
 	{
@@ -861,6 +860,9 @@ void CTFTankBoss::TankBossThink( void )
 		m_isDroppingBomb = false;
 
 		TFGameRules()->BroadcastSound( 255, "Announcer.MVM_Tank_Planted" );
+
+		// Added wave lose vo trigger
+		TFGameRules()->HaveAllPlayersSpeakConceptIfAllowed( MP_CONCEPT_MVM_WAVE_LOSE );
 	}
 
 	// if the Tank is driving under something, shut off its smokestack
@@ -982,7 +984,6 @@ void CTFTankBoss::FirePopFileEvent( EventInfo *eventInfo )
 void CTFTankBoss::Explode( void )
 {
 	StopSound( "MVM.TankEngineLoop" );
-	StopSound( "MVM.TankDeploy" );
 
 	FirePopFileEvent( &m_onKilledEventInfo );
 
