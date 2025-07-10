@@ -1608,6 +1608,7 @@ void CTFPlayerShared::OnConditionAdded( ETFCond eCond )
 	case TF_COND_SNIPERCHARGE_RAGE_BUFF:
 	case TF_COND_CRITBOOSTED_CARD_EFFECT:
 	case TF_COND_CRITBOOSTED_RUNE_TEMP:
+	case TF_COND_MINICRITBOOSTED:
 		OnAddCritBoost();
 		break;
 
@@ -1898,6 +1899,7 @@ void CTFPlayerShared::OnConditionRemoved( ETFCond eCond )
 	case TF_COND_SNIPERCHARGE_RAGE_BUFF:
 	case TF_COND_CRITBOOSTED_CARD_EFFECT:
 	case TF_COND_CRITBOOSTED_RUNE_TEMP:
+	case TF_COND_MINICRITBOOSTED:
 		OnRemoveCritBoost();
 		break;
 
@@ -13061,7 +13063,7 @@ bool CTFPlayer::CanMoveDuringTaunt()
 	if ( m_Shared.InCond( TF_COND_HALLOWEEN_KART ) )
 		return true;
 
-	if ( m_Shared.InCond( TF_COND_TAUNTING ) )
+	if ( m_Shared.InCond( TF_COND_TAUNTING ) || m_Shared.InCond( TF_COND_HALLOWEEN_THRILLER ) )
 	{
 #ifdef GAME_DLL
 		if ( tf_allow_sliding_taunt.GetBool() )
