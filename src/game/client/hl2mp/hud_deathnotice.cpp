@@ -115,7 +115,8 @@ void CHudDeathNotice::ApplySchemeSettings( IScheme *scheme )
 //-----------------------------------------------------------------------------
 void CHudDeathNotice::Init( void )
 {
-	ListenForGameEvent( "player_death" );	
+	ListenForGameEvent( "player_death" );
+	// TODO: Add generic_killfeed_event
 }
 
 //-----------------------------------------------------------------------------

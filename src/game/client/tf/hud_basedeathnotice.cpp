@@ -69,7 +69,7 @@ void CHudBaseDeathNotice::Init( void )
 	ListenForGameEvent( "rd_robot_killed" );
 	ListenForGameEvent( "special_score" );
 	ListenForGameEvent( "team_leader_killed" );
-	ListenForGameEvent( "generic_killfeed_event" );
+	ListenForGameEvent( "generic_killfeed_event" ); // TODO: Port to HL2MP
 }
 
 //-----------------------------------------------------------------------------
