@@ -231,6 +231,7 @@ ConVar mp_winlimit( "mp_winlimit", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Max sc
 	);
 
 ConVar mp_disable_respawn_times( "mp_disable_respawn_times", "0", FCVAR_NOTIFY | FCVAR_REPLICATED );
+ConVar mp_disable_respawn_times_team( "mp_disable_respawn_times_team", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "Which team should the mp_disable_respawn_times rule apply to. 0 = All Teams" );
 ConVar mp_bonusroundtime( "mp_bonusroundtime", "15", FCVAR_REPLICATED, "Time after round win until round restarts", true, 5, true, 15 );
 ConVar mp_stalemate_meleeonly( "mp_stalemate_meleeonly", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Restrict everyone to melee weapons only while in Sudden Death." );
 ConVar mp_forceautoteam( "mp_forceautoteam", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Automatically assign players to teams when joining." );
@@ -3464,10 +3465,9 @@ float CTeamplayRoundBasedRules::GetRespawnWaveMaxLength( int iTeam, bool bScaleW
 	if ( State_Get() != GR_STATE_RND_RUNNING )
 		return 0;
 
-	// Legacy support to respawn everyone
-	if ( mp_disable_respawn_times.GetInt() == 1 )
-		return 0.0f;
-	if ( mp_disable_respawn_times.GetInt() & (1 << iTeam) )
+	// If mp_disable_respawn_times_team is set to all or your team, skip respawn time.
+	int iRespawnTimeDisableTeam = mp_disable_respawn_times_team.GetInt();
+	if ( iRespawnTimeDisableTeam == 0 || iRespawnTimeDisableTeam == iTeam )
 		return 0.0f;
 
 	//Let's just turn off respawn times while players are messing around waiting for the tournament to start
