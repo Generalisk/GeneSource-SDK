@@ -181,6 +181,21 @@ extern vgui::IInputInternal *g_InputInternal;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if defined( DISCORD_RPC )
+
+// TODO: Find out A way for VPC to allow string preprocessors so I don't have to do shit like this again...
+#if defined( TF_CLIENT_DLL )
+#define DISCORD_APPID	"1393214771741851758" // Team Fortress 2 AppID
+#elif defined( HL2MP )
+#define DISCORD_APPID	"1393214722727215115" // Half-Life 2 Deathmatch AppID
+#elif defined( HL2_CLIENT_DLL )
+#define DISCORD_APPID	"1393214662392152094" // Half-Life 2 AppID
+#else
+#define DISCORD_APPID	"1393214575846887477" // Base SDK AppID
+#endif
+
+#endif // DISCORD_RPC
+
 extern IClientMode *GetClientModeNormal();
 
 // IF YOU ADD AN INTERFACE, EXTERN IT IN THE HEADER FILE.
@@ -342,7 +357,7 @@ static ConVar s_cl_class("cl_class", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "D
 
 #if defined ( DISCORD_RPC )
 // Discord RPC
-static ConVar cl_discord_appid("cl_discord_appid", "1393214575846887477", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
+static ConVar cl_discord_appid("cl_discord_appid", DISCORD_APPID, FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
 static int64_t startTimestamp = time(0);
 #endif
 
