@@ -42,6 +42,7 @@ The GeneSource SDK is A community-ran branch of Valve's [Source SDK](https://git
 
 # Features
 - A built-in library of free-to-use assets made by the community, for the community
+- Discord RPC Support
 - Proximity Chat Support
 - Support for animated Steam Avatars
 - ...and ***SO MANY*** bug fixes & quality of life improvements
