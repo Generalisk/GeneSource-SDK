@@ -86,6 +86,7 @@ ConVar cl_drawhud( "cl_drawhud", "1", FCVAR_CHEAT, "Enable the rendering of the 
 ConVar hud_takesshots( "hud_takesshots", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Auto-save a scoreboard screenshot at the end of a map." );
 ConVar hud_freezecamhide( "hud_freezecamhide", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Hide the HUD during freeze-cam" );
 ConVar cl_show_num_particle_systems( "cl_show_num_particle_systems", "0", FCVAR_CLIENTDLL, "Display the number of active particle systems." );
+ConVar cl_delete_temp_files( "cl_delete_temp_files", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Delete custom player sprays and other temp files during shutdown" );
 #if !defined( _X360 ) && !defined( NO_STEAM )
 ConVar cl_steam_overlay_toast_position( "cl_steam_overlay_toast_position", "0", FCVAR_ARCHIVE, "Which corner the Steam overlay notification toast should display itself in. 0 = k_EPositionTopLeft, 1 = k_EPositionTopRight, 2 = k_EPositionBottomLeft, 3 = k_EPositionBottomRight", OnSteamToastConVarChanged );
 ConVar cl_steam_overlay_toast_inset_horizontal( "cl_steam_overlay_toast_inset_horizontal", "0", FCVAR_ARCHIVE, "Steam overlay notification toast horizontal inset", true, 0.0f, true, 1.0f, OnSteamToastConVarChanged );
