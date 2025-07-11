@@ -1184,6 +1184,12 @@ void CHLClient::PostInit()
 	}
 #endif
 
+#if !defined( _X360 ) && !defined( NO_STEAM )
+	// This needs to be called every time the game is launched since Steam doesn't save the updated position
+	extern void SetSteamOverlayToastPosition( void ); // from clientmode_shared.cpp
+	SetSteamOverlayToastPosition();
+#endif
+
 	if ( !r_lightmap_bicubic_set.GetBool() && materials )
 	{
 		MaterialAdapterInfo_t info{};
