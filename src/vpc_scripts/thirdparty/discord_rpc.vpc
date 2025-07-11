@@ -1,0 +1,21 @@
+//-----------------------------------------------------------------------------
+// DISCORD_RPC.VPC
+//-----------------------------------------------------------------------------
+
+$Conditional BUILD_DISCORDRPC		1
+
+$Configuration
+{
+    $Compiler
+    {
+		$PreprocessorDefinitions		"$BASE;DISCORD_RPC"
+    }
+}
+
+$Project
+{
+    $Folder "Link Libraries"
+    {
+		$Lib		discord-rpc
+    }
+}
