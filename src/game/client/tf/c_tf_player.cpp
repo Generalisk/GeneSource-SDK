@@ -790,7 +790,7 @@ void C_TFRagdoll::CreateTFRagdoll()
 			m_nBody = pPlayer->GetBody();
 		}
 	}
-	else
+	else if ( pPlayer )
 	{
 		// Overwrite network origin so later interpolation will use this position.
 		SetNetworkOrigin( m_vecRagdollOrigin );
