@@ -13,6 +13,8 @@
   [![Repo Watchers](https://img.shields.io/github/watchers/Generalisk/GeneSource-SDK)](https://github.com/Generalisk/GeneSource-SDK)
   [![Repo Stars](https://img.shields.io/github/stars/Generalisk/GeneSource-SDK)](https://github.com/Generalisk/GeneSource-SDK)
   [![Repo Forks](https://img.shields.io/github/forks/Generalisk/GeneSource-SDK)](https://github.com/Generalisk/GeneSource-SDK)
+
+  [![Windows Test Build](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_windows.yml/badge.svg)](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_windows.yml)
 </div>
 
 <div align="center">
