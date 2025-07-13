@@ -48,7 +48,7 @@ static void HandleDiscordJoinRequest(const DiscordUser* request)
 
 
 
-const void DiscordRPC::Init()
+void DiscordRPC::Init()
 {
 	DiscordEventHandlers handlers;
 	memset(&handlers, 0, sizeof(handlers));
@@ -78,12 +78,12 @@ const void DiscordRPC::Init()
 	}
 }
 
-const void DiscordRPC::Shutdown()
+void DiscordRPC::Shutdown()
 {
 	Discord_Shutdown();
 }
 
-const void DiscordRPC::LevelInit( const char* pMapName )
+void DiscordRPC::LevelInit( const char* pMapName )
 {
 	if (!g_bTextMode)
 	{
@@ -100,7 +100,7 @@ const void DiscordRPC::LevelInit( const char* pMapName )
 	}
 }
 
-const void DiscordRPC::LevelShutdown()
+void DiscordRPC::LevelShutdown()
 {
 	if (!g_bTextMode)
 	{

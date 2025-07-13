@@ -39,11 +39,11 @@ static int64_t startTimestamp = time(0);
 static class DiscordRPC
 {
 public:
-	const void Init();
-	const void Shutdown();
+	void Init();
+	void Shutdown();
 
-	const void LevelInit( const char* pMapName );
-	const void LevelShutdown();
+	void LevelInit( const char* pMapName );
+	void LevelShutdown();
 };
 
 

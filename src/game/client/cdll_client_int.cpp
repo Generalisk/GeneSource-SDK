@@ -151,7 +151,7 @@
 #endif
 
 #if defined( DISCORD_RPC )
-#include "discordrpc.cpp"
+#include "discordrpc.h"
 #endif
 
 
@@ -224,6 +224,10 @@ IReplaySystem *g_pReplay = NULL;
 #endif
 
 IHaptics* haptics = NULL;// NVNT haptics system interface singleton
+
+#if defined( DISCORD_RPC )
+DiscordRPC discordRPC;
+#endif
 
 //=============================================================================
 // HPE_BEGIN
@@ -1121,7 +1125,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	}
 
 #if defined( DISCORD_RPC )
-	DiscordRPC::Init();
+	discordRPC.Init();
 #endif
 
 	return true;
@@ -1220,7 +1224,7 @@ void CHLClient::Shutdown( void )
     }
 
 #if defined( DISCORD_RPC )
-	DiscordRPC::Shutdown();
+	discordRPC.Shutdown();
 #endif
 
 #ifdef SIXENSE
@@ -1680,7 +1684,7 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 #endif
 
 #if defined( DISCORD_RPC )
-	DiscordRPC::LevelInit( pMapName );
+	discordRPC.LevelInit( pMapName );
 #endif
 
 	// Check low violence settings for this map
@@ -1775,7 +1779,7 @@ void CHLClient::LevelShutdown( void )
 	gHUD.LevelShutdown();
 
 #if defined( DISCORD_RPC )
-	DiscordRPC::LevelShutdown();
+	discordRPC.LevelShutdown();
 #endif
 
 	internalCenterPrint->Clear();
