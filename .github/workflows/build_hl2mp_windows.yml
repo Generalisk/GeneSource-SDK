@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Half-Life 2: Deathmatch (Windows)
+name: Half-Life 2 Deathmatch (Windows)
 
 on:
   push:
