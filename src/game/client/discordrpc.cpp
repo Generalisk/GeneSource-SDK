@@ -13,6 +13,9 @@
 
 
 
+#define DISCORD_GAMELOGO_KEY "GameLogo"
+
+
 static void HandleDiscordReady(const DiscordUser* connectedUser)
 {
 	DevMsg("Discord: Connected to user %s#%s - %s\n",
@@ -64,26 +67,25 @@ void DiscordRPC::Init()
 	sprintf(appid, "%d", engine->GetAppID());
 	Discord_Initialize(cl_discord_appid.GetString(), &handlers, 1, appid);
 
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		discordPresence.state = "In-Game";
-		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "GameLogo";
-		discordPresence.smallImageKey = "";
-		Discord_UpdatePresence(&discordPresence);
-	}
+	SetStatus_Menu();
 }
 
 void DiscordRPC::Shutdown()
 {
+	Discord_ClearPresence();
 	Discord_Shutdown();
 }
 
-void DiscordRPC::LevelInit( const char* pMapName )
+void DiscordRPC::SetStatus( DiscordRichPresence discordPresence )
+{
+	if (!g_bTextMode)
+	{
+		discordPresence.startTimestamp = startTimestamp;
+		Discord_UpdatePresence(&discordPresence);
+	}
+}
+
+void DiscordRPC::SetStatus_Map( const char* pMapName )
 {
 	if (!g_bTextMode)
 	{
@@ -95,12 +97,12 @@ void DiscordRPC::LevelInit( const char* pMapName )
 		sprintf(buffer, "Map: %s", pMapName);
 		discordPresence.details = buffer;
 		discordPresence.largeImageKey = pMapName;
-		discordPresence.smallImageKey = "GameLogo";
-		Discord_UpdatePresence(&discordPresence);
+		discordPresence.smallImageKey = DISCORD_GAMELOGO_KEY;
+		SetStatus(discordPresence);
 	}
 }
 
-void DiscordRPC::LevelShutdown()
+void DiscordRPC::SetStatus_Menu()
 {
 	if (!g_bTextMode)
 	{
@@ -109,9 +111,8 @@ void DiscordRPC::LevelShutdown()
 
 		discordPresence.state = "In-Game";
 		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "GameLogo";
+		discordPresence.largeImageKey = DISCORD_GAMELOGO_KEY;
 		discordPresence.smallImageKey = "";
-		Discord_UpdatePresence(&discordPresence);
+		SetStatus(discordPresence);
 	}
 }

@@ -1684,7 +1684,7 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 #endif
 
 #if defined( DISCORD_RPC )
-	discordRPC.LevelInit( pMapName );
+	discordRPC.SetStatus_Map( pMapName );
 #endif
 
 	// Check low violence settings for this map
@@ -1779,7 +1779,7 @@ void CHLClient::LevelShutdown( void )
 	gHUD.LevelShutdown();
 
 #if defined( DISCORD_RPC )
-	discordRPC.LevelShutdown();
+	discordRPC.SetStatus_Menu();
 #endif
 
 	internalCenterPrint->Clear();

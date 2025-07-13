@@ -42,8 +42,9 @@ public:
 	void Init();
 	void Shutdown();
 
-	void LevelInit( const char* pMapName );
-	void LevelShutdown();
+	void SetStatus( DiscordRichPresence discordPresence );
+	void SetStatus_Map( const char* pMapName );
+	void SetStatus_Menu();
 };
 
 
