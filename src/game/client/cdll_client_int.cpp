@@ -151,8 +151,7 @@
 #endif
 
 #if defined( DISCORD_RPC )
-#include "discord_rpc.h"
-#include <time.h>
+#include "discordrpc.cpp"
 #endif
 
 
@@ -180,21 +179,6 @@ extern vgui::IInputInternal *g_InputInternal;
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-#if defined( DISCORD_RPC )
-
-// TODO: Find out A way for VPC to allow string preprocessors so I don't have to do shit like this again...
-#if defined( TF_CLIENT_DLL )
-#define DISCORD_APPID	"1393214771741851758" // Team Fortress 2 AppID
-#elif defined( HL2MP )
-#define DISCORD_APPID	"1393214722727215115" // Half-Life 2 Deathmatch AppID
-#elif defined( HL2_CLIENT_DLL )
-#define DISCORD_APPID	"1393214662392152094" // Half-Life 2 AppID
-#else
-#define DISCORD_APPID	"1393214575846887477" // Base SDK AppID
-#endif
-
-#endif // DISCORD_RPC
 
 extern IClientMode *GetClientModeNormal();
 
@@ -354,12 +338,6 @@ void DispatchHudText( const char *pszName );
 static ConVar s_CV_ShowParticleCounts("showparticlecounts", "0", 0, "Display number of particles drawn per frame");
 static ConVar s_cl_team("cl_team", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "Default team when joining a game");
 static ConVar s_cl_class("cl_class", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "Default class when joining a game");
-
-#if defined ( DISCORD_RPC )
-// Discord RPC
-static ConVar cl_discord_appid("cl_discord_appid", DISCORD_APPID, FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
-static int64_t startTimestamp = time(0);
-#endif
 
 #ifdef HL1MP_CLIENT_DLL
 static ConVar s_cl_load_hl1_content("cl_load_hl1_content", "0", FCVAR_ARCHIVE, "Mount the content from Half-Life: Source if possible");
@@ -875,44 +853,6 @@ bool IsEngineThreaded()
 	return false;
 }
 
-#if defined ( DISCORD_RPC )
-//-----------------------------------------------------------------------------
-// Discord RPC
-//-----------------------------------------------------------------------------
-static void HandleDiscordReady(const DiscordUser* connectedUser)
-{
-	DevMsg("Discord: Connected to user %s#%s - %s\n",
-		connectedUser->username,
-		connectedUser->discriminator,
-		connectedUser->userId);
-}
-
-static void HandleDiscordDisconnected(int errcode, const char* message)
-{
-	DevMsg("Discord: Disconnected (%d: %s)\n", errcode, message);
-}
-
-static void HandleDiscordError(int errcode, const char* message)
-{
-	DevMsg("Discord: Error (%d: %s)\n", errcode, message);
-}
-
-static void HandleDiscordJoin(const char* secret)
-{
-	// TODO: Impliment
-}
-
-static void HandleDiscordSpectate(const char* secret)
-{
-	// TODO: Impliment
-}
-
-static void HandleDiscordJoinRequest(const DiscordUser* request)
-{
-	// TODO: Impliment
-}
-#endif
-
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
@@ -1181,33 +1121,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	}
 
 #if defined( DISCORD_RPC )
-	// Discord RPC
-	DiscordEventHandlers handlers;
-	memset(&handlers, 0, sizeof(handlers));
-
-	handlers.ready = HandleDiscordReady;
-	handlers.disconnected = HandleDiscordDisconnected;
-	handlers.errored = HandleDiscordError;
-	handlers.joinGame = HandleDiscordJoin;
-	handlers.spectateGame = HandleDiscordSpectate;
-	handlers.joinRequest = HandleDiscordJoinRequest;
-
-	char appid[255];
-	sprintf(appid, "%d", engine->GetAppID());
-	Discord_Initialize(cl_discord_appid.GetString(), &handlers, 1, appid);
-
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		discordPresence.state = "In-Game";
-		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "GameLogo";
-		discordPresence.smallImageKey = "";
-		Discord_UpdatePresence(&discordPresence);
-	}
+	DiscordRPC::Init();
 #endif
 
 	return true;
@@ -1306,8 +1220,7 @@ void CHLClient::Shutdown( void )
     }
 
 #if defined( DISCORD_RPC )
-	// Discord RPC
-	Discord_Shutdown();
+	DiscordRPC::Shutdown();
 #endif
 
 #ifdef SIXENSE
@@ -1767,20 +1680,7 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 #endif
 
 #if defined( DISCORD_RPC )
-	// Discord RPC
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		char buffer[256];
-		discordPresence.state = "In-Game";
-		sprintf(buffer, "Map: %s", pMapName);
-		discordPresence.details = buffer;
-		discordPresence.largeImageKey = pMapName;
-		discordPresence.smallImageKey = "GameLogo";
-		Discord_UpdatePresence(&discordPresence);
-	}
+	DiscordRPC::LevelInit( pMapName );
 #endif
 
 	// Check low violence settings for this map
@@ -1875,19 +1775,7 @@ void CHLClient::LevelShutdown( void )
 	gHUD.LevelShutdown();
 
 #if defined( DISCORD_RPC )
-	// Discord RPC
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		discordPresence.state = "In-Game";
-		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "GameLogo";
-		discordPresence.smallImageKey = "";
-		Discord_UpdatePresence(&discordPresence);
-	}
+	DiscordRPC::LevelShutdown();
 #endif
 
 	internalCenterPrint->Clear();

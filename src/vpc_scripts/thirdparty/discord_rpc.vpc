@@ -6,16 +6,16 @@ $Conditional BUILD_DISCORDRPC		1
 
 $Configuration
 {
-    $Compiler
-    {
+	$Compiler
+	{
 		$PreprocessorDefinitions		"$BASE;DISCORD_RPC"
-    }
+	}
 }
 
 $Project
 {
-    $Folder "Link Libraries"
-    {
+	$Folder "Link Libraries"
+	{
 		$Lib		discord-rpc
-    }
+	}
 }

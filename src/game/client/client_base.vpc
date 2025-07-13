@@ -1255,6 +1255,12 @@ $Project
 		$File	"game_controls\vguitextwindow.h"
 		$File	"game_controls\IconPanel.h"
 	}
+
+	$Folder "Discord RPC" [$BUILD_DISCORDRPC]
+	{
+		$File "discordrpc.cpp"
+		$File "discordrpc.h"
+	}
 	
 	$Folder	"Link Libraries"
 	{
