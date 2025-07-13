@@ -75,6 +75,7 @@ CMDLPanel::CMDLPanel( vgui::Panel *pParent, const char *pName ) : BaseClass( pPa
 	SetIdentityMatrix( m_RootMDL.m_MDLToWorld );
 	m_RootMDL.m_pStudioHdr = NULL;
 	m_RootMDL.m_unMdlCacheSerial = 0;
+	m_RootMDL.m_pIKContext = NULL;
 	m_bDrawCollisionModel = false;
 	m_bWireFrame = false;
 	m_bGroundGrid = false;
@@ -94,6 +95,11 @@ CMDLPanel::~CMDLPanel()
 	{
 		delete m_RootMDL.m_pStudioHdr;
 		m_RootMDL.m_pStudioHdr = NULL;
+	}
+	if ( m_RootMDL.m_pIKContext )
+	{
+		delete m_RootMDL.m_pIKContext;
+		m_RootMDL.m_pIKContext = NULL;
 	}
 }
 
@@ -159,6 +165,11 @@ void CMDLPanel::SetMDL( MDLHandle_t handle, void *pProxyData )
 	}
 	m_RootMDL.m_pStudioHdr = new CStudioHdr( m_RootMDL.m_MDL.GetStudioHdr(), g_pMDLCache );
 	m_RootMDL.m_MDL.m_pProxyData = pProxyData;
+	if ( m_RootMDL.m_pIKContext )
+	{
+		delete m_RootMDL.m_pIKContext;
+	}
+	m_RootMDL.m_pIKContext = new CIKContext;
 
 	Vector vecMins, vecMaxs;
 	GetMDLBoundingBox( &vecMins, &vecMaxs, handle, m_RootMDL.m_MDL.m_nSequence );
@@ -337,7 +348,7 @@ void CMDLPanel::DrawCollisionModel()
 	CStudioHdr &studioHdr = *m_RootMDL.m_pStudioHdr;
 
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES];
-	m_RootMDL.m_MDL.SetUpBones( m_RootMDL.m_MDLToWorld, MAXSTUDIOBONES, pBoneToWorld );
+	SetupBones( m_RootMDL, MAXSTUDIOBONES, pBoneToWorld );
 
 	// PERFORMANCE: Just parse the script each frame.  It's fast enough for tools.  If you need
 	// this to go faster then cache off the bone index mapping in an array like HLMV does
@@ -459,7 +470,7 @@ void CMDLPanel::OnPaint3D()
 	SetupFlexWeights();
 
 	matrix3x4_t *pBoneToWorld = g_pStudioRender->LockBoneMatrices( studioHdr.numbones() );
-	m_RootMDL.m_MDL.SetUpBones( m_RootMDL.m_MDLToWorld, studioHdr.numbones(), pBoneToWorld, m_PoseParameters, m_SequenceLayers, m_nNumSequenceLayers );
+	SetupBones( m_RootMDL, studioHdr.numbones(), pBoneToWorld, m_PoseParameters, m_SequenceLayers, m_nNumSequenceLayers );
 	g_pStudioRender->UnlockBoneMatrices();
 
 	IMaterial* pOverrideMaterial = GetOverrideMaterial( m_RootMDL.m_MDL.GetMDL() );
@@ -978,4 +989,72 @@ void CMDLPanel::ValidateMDLs()
 			m_aMergeMDLs[iMerge].m_unMdlCacheSerial = uMdlCacheSerial;
 		}
 	}
+}
+
+void CMDLPanel::SetupBones( MDLData_t& mdlData, int nMaxBoneCount, matrix3x4_t* pBoneToWorld,
+							const float* pflPoseParameters /*= NULL*/, MDLSquenceLayer_t* pSequenceLayers /*= NULL*/, int nNumSequenceLayers /*= 0*/ )
+{
+	CMDL& mdl = mdlData.m_MDL;
+	CStudioHdr* pStudioHdr = mdlData.m_pStudioHdr;
+	CIKContext* pIKContext = mdlData.m_pIKContext;
+
+	if( !pflPoseParameters )
+	{
+		float flDefaultPoseParameters[ MAXSTUDIOPOSEPARAM ];
+		Studio_CalcDefaultPoseParameters( pStudioHdr, flDefaultPoseParameters, MAXSTUDIOPOSEPARAM );
+		pflPoseParameters = flDefaultPoseParameters;
+	}
+
+	QAngle renderAngles;
+	Vector renderOrigin;
+	MatrixAngles( mdlData.m_MDLToWorld, renderAngles );
+	MatrixPosition( mdlData.m_MDLToWorld, renderOrigin );
+
+	IBoneSetup boneSetup( pStudioHdr, BONE_USED_BY_ANYTHING, pflPoseParameters );
+
+	Vector pos[ MAXSTUDIOBONES ];
+	Quaternion q[ MAXSTUDIOBONES ];
+	boneSetup.InitPose( pos, q );
+
+	int nFrameCount = Studio_MaxFrame( pStudioHdr, mdl.m_nSequence, pflPoseParameters );
+	float flPlaybackRate = Studio_FPS( pStudioHdr, mdl.m_nSequence, pflPoseParameters );
+	float flCycle = ( mdl.m_flTime * flPlaybackRate ) / nFrameCount;
+	flCycle -= ( int )flCycle;
+
+	pIKContext->Init( pStudioHdr, renderAngles, renderOrigin, mdl.m_flTime, 0, BONE_USED_BY_ANYTHING );
+
+	boneSetup.AccumulatePose( pos, q, mdl.m_nSequence, flCycle, 1.0f, mdl.m_flTime, pIKContext );
+
+	if( pSequenceLayers )
+	{
+		for( int i = 0; i < nNumSequenceLayers; i++ )
+		{
+			nFrameCount = Studio_MaxFrame( pStudioHdr, pSequenceLayers[ i ].m_nSequenceIndex, pflPoseParameters );
+			if( pSequenceLayers[ i ].m_bNoLoop )
+			{
+				if( pSequenceLayers[ i ].m_flCycleBeganAt == 0 )
+					pSequenceLayers[ i ].m_flCycleBeganAt = mdl.m_flTime;
+
+				float flElapsedTime = mdl.m_flTime - pSequenceLayers[ i ].m_flCycleBeganAt;
+				flCycle = ( flElapsedTime * flPlaybackRate ) / nFrameCount;
+			}
+			else
+			{
+				flCycle = ( mdl.m_flTime * flPlaybackRate ) / nFrameCount;
+			}
+			flCycle -= ( int )flCycle;
+
+			boneSetup.AccumulatePose( pos, q, pSequenceLayers[ i ].m_nSequenceIndex, flCycle,
+									  pSequenceLayers[ i ].m_flWeight, mdl.m_flTime, pIKContext );
+		}
+	}
+
+	boneSetup.CalcAutoplaySequences( pos, q, mdl.m_flTime, pIKContext );
+	boneSetup.CalcBoneAdj( pos, q, pflPoseParameters );
+
+	CBoneBitList boneComputed;
+	pIKContext->SolveDependencies( pos, q, pBoneToWorld, boneComputed );
+
+	Studio_RunBoneFlexDrivers( mdl.m_pFlexControls, pStudioHdr, pos, pBoneToWorld, mdlData.m_MDLToWorld );
+	Studio_BuildMatrices( pStudioHdr, renderAngles, renderOrigin, pos, q, -1, 1.0f, pBoneToWorld, BONE_USED_BY_ANYTHING );
 }
