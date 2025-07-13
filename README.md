@@ -14,7 +14,9 @@
   [![Repo Stars](https://img.shields.io/github/stars/Generalisk/GeneSource-SDK)](https://github.com/Generalisk/GeneSource-SDK)
   [![Repo Forks](https://img.shields.io/github/forks/Generalisk/GeneSource-SDK)](https://github.com/Generalisk/GeneSource-SDK)
 
-  [![Windows Test Build](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_windows.yml/badge.svg)](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_windows.yml)
+  [![Test Build (HL2) - Windows](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_hl2_windows.yml/badge.svg)](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_hl2_windows.yml)
+  [![Test Build (HL2MP) - Windows](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_hl2mp_windows.yml/badge.svg)](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_hl2mp_windows.yml)
+  [![Test Build (TF) - Windows](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_tf_windows.yml/badge.svg)](https://github.com/Generalisk/GeneSource-SDK/actions/workflows/build_tf_windows.yml)
 </div>
 
 <div align="center">

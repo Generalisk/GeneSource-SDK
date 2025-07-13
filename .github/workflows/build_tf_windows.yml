@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Windows Test Build
+name: Team Fortress 2 (Windows)
 
 on:
   push:
@@ -24,19 +24,16 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build_tf_windows:
     runs-on: windows-latest
     steps:
     - name: Checkout Files
       uses: actions/checkout@v4
-      
     - name: Generate Visual Studio Projects
       working-directory: ./src/
-      run: ./createallprojects.bat
-      
+      run: ./devtools/bin/vpc.exe /tf /define:SOURCESDK +everything /mksln everything.sln
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-      
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
