@@ -57,6 +57,7 @@ public:
 	bool				CheckProximity( float flDistance );
 
 	bool				IsPlayerIgnoringPlayer( int iTalker, int iListener );
+	bool				IsPlayerIgnoringPlayerChat( int iTalker, int iListener );
 
 private:
 
